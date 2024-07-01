@@ -20,25 +20,36 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
+
       - name: Set up Python ${{ env.PythonVersion }}
         uses: actions/setup-python@v4
         with:
           python-version: ${{ env.PythonVersion }}
+
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           pip install flake8 pytest pytest-cov
           pip install -r requirements.txt
+
       - name: Lint with flake8
         run: |
           flake8 . --show-source --statistics
+
       - name: Check Complexity
         run: |
           cd ../
           flake8 . --exit-zero --max-complexity=10 --statistics
+
       - name: Test with pytest
         run: |	
           pytest -v --cov-report=term-missing --cov=. --cov-report=json
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: code
+          path: ./src
 
 
 
